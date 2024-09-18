@@ -3,3 +3,4 @@ pandas[performance, parquet, aws]
 pendulum
 ultralytics
 transformers
+gradio
