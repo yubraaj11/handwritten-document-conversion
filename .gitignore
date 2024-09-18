@@ -18,6 +18,11 @@ __pycache__/
 # C extensions
 *.so
 
+# Folder
+models
+examples
+images
+
 # Distribution / packaging
 .Python
 build/
