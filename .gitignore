@@ -22,6 +22,7 @@ __pycache__/
 models
 examples
 images
+txt
 
 # Distribution / packaging
 .Python
