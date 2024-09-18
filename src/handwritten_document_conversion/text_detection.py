@@ -14,8 +14,8 @@ RESIZED_IMG_DIR = os.path.join(file_path, '..', '..', 'images', 'resized')
 class TextDetection:
     _model = None
 
-    def __init__(self, image_path) -> None:
-        self.image_path = image_path
+    def __init__(self, image_file) -> None:
+        self.image_file = image_file
 
         if TextDetection._model is None:
             TextDetection._model = YOLO(model_path)
@@ -24,7 +24,7 @@ class TextDetection:
         """
         Function to return the results
         """
-        results = TextDetection._model(self.image_path)
+        results = TextDetection._model(os.path.join(OG_IMG_DIR, self.image_file))
         return results
 
     def return_bboxes(self):
@@ -45,7 +45,7 @@ class TextDetection:
         Returns the cropped images based on the bounding boxes, sorted left to right
         """
         # Read the image
-        image = cv2.imread(self.image_path)
+        image = cv2.imread(os.path.join(OG_IMG_DIR, self.image_file))
 
         # Get bounding boxes
         bboxes = self.return_bboxes()
@@ -62,7 +62,7 @@ class TextDetection:
 
         # Display the cropped images
         for idx, cropped_img in enumerate(cropped_images):
-            file_name = f"cropped_img {idx+1}.jpg"
+            file_name = f"{os.path.splitext(self.image_file)[0]}_{idx+1}{os.path.splitext(self.image_file)[-1]}"
             cv2.imwrite(os.path.join(RESIZED_IMG_DIR, file_name), cropped_img)
             cv2.imshow(file_name, cropped_img)
             cv2.waitKey(0)  # Wait for a key press to close the image window
