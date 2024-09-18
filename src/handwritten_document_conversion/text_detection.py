@@ -51,10 +51,11 @@ class TextDetection:
         bboxes = self.return_bboxes()
 
         # Sort bounding boxes from left to right based on the x1 coordinate
-        bboxes = sorted(bboxes, key=lambda x: x[0])
+        bboxes = sorted(bboxes, key=lambda x: (x[1], x[0]))
 
         # Crop images
         cropped_images = []
+        cropped_images_file_name = []
         for bbox in bboxes:
             x1, y1, x2, y2 = bbox
             cropped_image = image[y1:y2, x1:x2]
@@ -63,9 +64,11 @@ class TextDetection:
         # Display the cropped images
         for idx, cropped_img in enumerate(cropped_images):
             file_name = f"{os.path.splitext(self.image_file)[0]}_{idx+1}{os.path.splitext(self.image_file)[-1]}"
-            cv2.imwrite(os.path.join(RESIZED_IMG_DIR, file_name), cropped_img)
-            cv2.imshow(file_name, cropped_img)
-            cv2.waitKey(0)  # Wait for a key press to close the image window
-            cv2.destroyAllWindows()
+            cropped_images_file_name.append(file_name)
 
-        return cropped_images
+            cv2.imwrite(os.path.join(RESIZED_IMG_DIR, file_name), cropped_img)
+            # cv2.imshow(file_name, cropped_img)
+            # cv2.waitKey(0)  # Wait for a key press to close the image window
+            # cv2.destroyAllWindows()
+
+        return cropped_images, cropped_images_file_name
