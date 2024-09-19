@@ -23,6 +23,7 @@ models
 examples
 images
 txt
+flagged
 
 # Distribution / packaging
 .Python
