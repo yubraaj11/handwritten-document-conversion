@@ -1,4 +1,7 @@
 import os
+from typing import List
+
+import numpy as np
 from ultralytics import YOLO
 import cv2
 
@@ -19,17 +22,19 @@ class TextDetection:
 
         if TextDetection._model is None:
             TextDetection._model = YOLO(model_path)
-        
-    def detect(self):
+
+    def detect(self) -> list:
         """
-        Function to return the results
+        Function to return results from TextDetection Model
+        :return: results
         """
         results = TextDetection._model(os.path.join(OG_IMG_DIR, self.image_file))
         return results
 
-    def return_bboxes(self):
+    def return_bboxes(self) -> list[list[int]]:
         """
-        Returns the bounding boxes of the detected texts
+        Function to return bounding box of each cropped image
+        :return: bboxes
         """
         results = self.detect()
         bboxes = []
@@ -40,9 +45,10 @@ class TextDetection:
                 bboxes.append([int(x1), int(y1), int(x2), int(y2)])
         return bboxes
 
-    def return_cropped_images(self):
+    def return_cropped_images(self) -> (list[np.ndarray], list[str]):
         """
-        Returns the cropped images based on the bounding boxes, sorted left to right
+        Function to return cropped_images list and saved images file_path
+        :return: cropped_images, cropped_images_file_name
         """
         # Read the image
         image = cv2.imread(os.path.join(OG_IMG_DIR, self.image_file))
@@ -67,8 +73,9 @@ class TextDetection:
             cropped_images_file_name.append(file_name)
 
             cv2.imwrite(os.path.join(RESIZED_IMG_DIR, file_name), cropped_img)
-            # cv2.imshow(file_name, cropped_img)
-            # cv2.waitKey(0)  # Wait for a key press to close the image window
-            # cv2.destroyAllWindows()
+            cv2.imshow(file_name, cropped_img)
+            cv2.waitKey(0)  # Wait for a key press to close the image window
+            cv2.destroyAllWindows()
 
         return cropped_images, cropped_images_file_name
+
