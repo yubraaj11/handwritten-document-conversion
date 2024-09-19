@@ -20,11 +20,11 @@ def pipeline_function(img_file):
         texts.append(generated_text)
 
 
-    with open(os.path.join(TEXT_FILE_DIR, "predicted_cahana.txt"), 'w') as file:
+    with open(os.path.join(TEXT_FILE_DIR, "predicted_test.txt"), 'w') as file:
         for text in texts:
             file.write(text)
             file.write(' ')
 
 
 if __name__ == "__main__":
-    pipeline_function(img_file='cahana.jpg')
+    pipeline_function(img_file='test_2.jpg')
