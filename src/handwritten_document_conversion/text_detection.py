@@ -72,10 +72,10 @@ class TextDetection:
             file_name = f"{os.path.splitext(self.image_file)[0]}_{idx+1}{os.path.splitext(self.image_file)[-1]}"
             cropped_images_file_name.append(file_name)
 
-            cv2.imwrite(os.path.join(RESIZED_IMG_DIR, file_name), cropped_img)
-            cv2.imshow(file_name, cropped_img)
-            cv2.waitKey(0)  # Wait for a key press to close the image window
-            cv2.destroyAllWindows()
+            # cv2.imwrite(os.path.join(RESIZED_IMG_DIR, file_name), cropped_img)
+            # cv2.imshow(file_name, cropped_img)
+            # cv2.waitKey(0)  # Wait for a key press to close the image window
+            # cv2.destroyAllWindows()
 
         return cropped_images, cropped_images_file_name
 
