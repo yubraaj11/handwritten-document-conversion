@@ -2,6 +2,7 @@ from PIL import Image
 from transformers import TrOCRProcessor,VisionEncoderDecoderModel
 
 MODEL_NAME = "paudelanil/denvagari-TrOCR"
+MODEL_NAME_1 = "aayushpuri01/TrOCR-Devanagari"
 
 class TextRecognition:
     _processor = None
@@ -9,13 +10,18 @@ class TextRecognition:
 
     def __init__(self):
         if TextRecognition._processor is None:
-            TextRecognition._processor = TrOCRProcessor.from_pretrained(MODEL_NAME)
+            TextRecognition._processor = TrOCRProcessor.from_pretrained(MODEL_NAME_1)
 
         if TextRecognition._model is None:
-            TextRecognition._model = VisionEncoderDecoderModel.from_pretrained(MODEL_NAME)
+            TextRecognition._model = VisionEncoderDecoderModel.from_pretrained(MODEL_NAME_1)
 
     @staticmethod
-    def return_generated_text(image):
+    def return_generated_text(image: Image) -> str:
+        """
+        Function to return text associated with each cropped image file
+        :param image: PIL Image
+        :return: generated_text
+        """
         pil_image = Image.open(image)
 
         if TextRecognition._processor is None:
