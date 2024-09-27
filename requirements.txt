@@ -1,0 +1,3 @@
+jiwer
+evaluate
+accelerate>=0.21.0

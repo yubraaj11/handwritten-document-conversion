@@ -24,6 +24,8 @@ examples
 images
 txt
 flagged
+data
+
 
 # Distribution / packaging
 .Python
