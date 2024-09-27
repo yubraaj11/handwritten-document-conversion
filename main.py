@@ -16,7 +16,7 @@ def pipeline_function(img_file):
 
     texts = []
     for cropped_image in cropped_images_file_name:
-        generated_text = text_rec_obj.return_generated_text(image=os.path.join(RESIZED_IMG_DIR, cropped_image))
+        generated_text = text_rec_obj.return_generated_text(image_path=os.path.join(RESIZED_IMG_DIR, cropped_image))
         texts.append(generated_text)
 
 
@@ -27,4 +27,4 @@ def pipeline_function(img_file):
 
 
 if __name__ == "__main__":
-    pipeline_function(img_file='test_2.jpg')
+    pipeline_function(img_file='kabita_2.jpg')
