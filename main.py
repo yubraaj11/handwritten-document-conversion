@@ -9,6 +9,11 @@ RESIZED_IMG_DIR = os.path.join(file_path, 'images', 'resized')
 TEXT_FILE_DIR = os.path.join(file_path, 'txt')
 
 def pipeline_function(img_file):
+    """
+    Detect texts on the provided document, resize the and generate respective text and saves into .txt file
+    :param img_file: Path of document
+    :return:
+    """
     text_det_obj = TextDetection(image_file=img_file)
     text_rec_obj = TextRecognition()
 
@@ -27,4 +32,4 @@ def pipeline_function(img_file):
 
 
 if __name__ == "__main__":
-    pipeline_function(img_file='kabita_2.jpg')
+    pipeline_function(img_file='test_2.jpg')
