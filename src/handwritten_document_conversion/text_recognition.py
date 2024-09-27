@@ -1,7 +1,7 @@
 import os
 import cv2
 from PIL import Image
-from transformers import AutoTokenizer, AutoModel, ViTImageProcessor, TrOCRProcessor, VisionEncoderDecoderModel
+from transformers import AutoTokenizer, ViTImageProcessor, TrOCRProcessor, VisionEncoderDecoderModel
 from dotenv import load_dotenv
 import numpy as np
 
@@ -22,7 +22,7 @@ class TextRecognition:
             TextRecognition._tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
         if TextRecognition._model is None:
-            TextRecognition._model = AutoModel.from_pretrained(MODEL_NAME)
+            TextRecognition._model = VisionEncoderDecoderModel.from_pretrained(MODEL_NAME)
             TextRecognition._model.config.early_stopping = True
 
         if TextRecognition._feature_extractor is None:
