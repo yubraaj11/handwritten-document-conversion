@@ -3,6 +3,8 @@ import gradio as gr
 from src.handwritten_document_conversion.text_recognition import TextRecognition
 from src.handwritten_document_conversion.text_detection import TextDetection
 
+from utils.image_processing import PreprocessImage
+
 file_path = os.path.dirname(os.path.abspath(__file__))
 RESIZED_IMG_DIR = os.path.join(file_path, 'images', 'resized')
 
@@ -19,7 +21,7 @@ def pipeline_function(img):
 
     texts = []
     for cropped_image in cropped_images_file_name:
-        generated_text = text_rec_obj.return_generated_text(image=os.path.join(RESIZED_IMG_DIR, cropped_image))
+        generated_text = text_rec_obj.return_generated_text(image_path=os.path.join(RESIZED_IMG_DIR, cropped_image))
         texts.append(generated_text)
 
     # Combine all the recognized text
