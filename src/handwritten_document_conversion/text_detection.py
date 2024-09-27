@@ -5,6 +5,8 @@ import numpy as np
 from ultralytics import YOLO
 import cv2
 
+from utils.image_processing import PreprocessImage
+
 
 file_path = os.path.dirname(os.path.abspath(__file__))
 MODEL_DIR = os.path.join(file_path, '..', '..' ,'models')
@@ -19,6 +21,7 @@ class TextDetection:
 
     def __init__(self, image_file) -> None:
         self.image_file = image_file
+        self.image_preprocess = PreprocessImage()
 
         if TextDetection._model is None:
             TextDetection._model = YOLO(model_path)
@@ -56,24 +59,33 @@ class TextDetection:
         # Get bounding boxes
         bboxes = self.return_bboxes()
 
-        # Sort bounding boxes from left to right based on the x1 coordinate
-        bboxes = sorted(bboxes, key=lambda x: (x[1], x[0]))
+        bboxes_with_centers = []
+        for bbox in bboxes:
+            x1, y1, x2, y2 = bbox
+            center_x = (x1 + x2) // 2
+            center_y = (y1 + y2) // 2
+            bboxes_with_centers.append((bbox, (center_x, center_y)))
+
+        # Sort bounding boxes first by the y-coordinate of the center, then by the x-coordinate (left to right)
+        bboxes_with_centers = sorted(bboxes_with_centers, key=lambda x: (x[1][1], x[1][0]))
 
         # Crop images
         cropped_images = []
         cropped_images_file_name = []
-        for bbox in bboxes:
+        for idx, (bbox, center) in enumerate(bboxes_with_centers):
             x1, y1, x2, y2 = bbox
             cropped_image = image[y1:y2, x1:x2]
+
+            cropped_image = self.image_preprocess.preprocess_image(cropped_image)   # Added padding to make size (224,224) before saving
             cropped_images.append(cropped_image)
 
-        # Display the cropped images
-        for idx, cropped_img in enumerate(cropped_images):
-            file_name = f"{os.path.splitext(self.image_file)[0]}_{idx+1}{os.path.splitext(self.image_file)[-1]}"
+            # Create a file name for the cropped image
+            file_name = f"{os.path.splitext(self.image_file)[0]}_{idx + 1}{os.path.splitext(self.image_file)[-1]}"
             cropped_images_file_name.append(file_name)
 
-            cv2.imwrite(os.path.join(RESIZED_IMG_DIR, file_name), cropped_img)
-            # cv2.imshow(file_name, cropped_img)
+            cv2.imwrite(os.path.join(RESIZED_IMG_DIR, file_name), cropped_image)
+
+            # cv2.imshow(file_name, cropped_image)
             # cv2.waitKey(0)  # Wait for a key press to close the image window
             # cv2.destroyAllWindows()
 
