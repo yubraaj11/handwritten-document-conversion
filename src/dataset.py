@@ -91,22 +91,3 @@ class IIITHWDataset(Dataset):
             print(f"Error loading data at index {idx}: {e}")
             return None
 
-# Example usage
-if __name__ == "__main__":
-    # Assuming you have a DataFrame `df` with image file names and text labels
-    import pandas as pd
-    from transformers import AutoProcessor
-
-    # Example processor
-    processor = AutoProcessor.from_pretrained("facebook/trocr-base-handwritten")
-
-    # Example dataset and root directory
-    root_dir = "/path/to/dataset/images"
-    df = pd.read_csv("/path/to/dataset/annotations.csv")
-
-    # Instantiate the dataset
-    dataset = IIITHWDataset(root_dir=root_dir, df=df, processor=processor, max_target_length=128)
-
-    # Access a sample
-    sample = dataset[0]
-    print(sample)
