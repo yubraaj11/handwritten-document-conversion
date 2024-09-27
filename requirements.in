@@ -4,3 +4,4 @@ pendulum
 ultralytics
 transformers
 gradio
+python-dotenv
