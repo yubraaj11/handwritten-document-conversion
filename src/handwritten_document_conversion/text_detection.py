@@ -8,13 +8,18 @@ import cv2
 from utils.image_processing import PreprocessImage
 
 
+# Get the parent directory of the current Python file (handwritten_document_conversion)
 file_path = os.path.dirname(os.path.abspath(__file__))
-MODEL_DIR = os.path.join(file_path, '..', '..' ,'models')
+
+# Move up two directories from src/handwritten_document_conversion to the project root
+root_dir = os.path.abspath(os.path.join(file_path, '..', '..'))
+
+# Set the correct paths for models and images
+MODEL_DIR = os.path.join(root_dir, 'models')
 model_path = os.path.join(MODEL_DIR, 'best.pt')
 
-OG_IMG_DIR = os.path.join(file_path, '..', '..', 'images', 'original')
-RESIZED_IMG_DIR = os.path.join(file_path, '..', '..', 'images', 'resized')
-
+OG_IMG_DIR = os.path.join(root_dir, 'images', 'original')
+RESIZED_IMG_DIR = os.path.join(root_dir, 'images', 'resized')
 
 class TextDetection:
     _model = None
@@ -90,4 +95,5 @@ class TextDetection:
             # cv2.destroyAllWindows()
 
         return cropped_images, cropped_images_file_name
+
 
