@@ -9,6 +9,11 @@ class PreprocessImage:
         self.target_size = target_size
 
     def preprocess_image(self, image):
+        """
+        Preprocesses image into size (224, 224) compatible for ViT
+        :param image: ndarray
+        :return:
+        """
         # Convert OpenCV image (NumPy array) to PIL Image
         image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
