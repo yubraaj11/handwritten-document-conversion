@@ -9,3 +9,4 @@ pendulum
 ultralytics
 transformers
 gradio
+fastapi

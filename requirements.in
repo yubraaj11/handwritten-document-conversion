@@ -1,7 +1,14 @@
+python-dotenv
+jiwer
+evaluate
+accelerate>=0.21.0
+transformers==4.45.0
+python-dotenv
 pyarrow
 pandas[performance, parquet, aws]
 pendulum
 ultralytics
-transformers
 gradio
-python-dotenv
+fastapi
+uvicorn
+fastapi
