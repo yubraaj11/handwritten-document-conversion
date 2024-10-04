@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List,Tuple
 
 import numpy as np
 from ultralytics import YOLO
@@ -39,6 +39,45 @@ class TextDetection:
         results = TextDetection._model(os.path.join(OG_IMG_DIR, self.image_file))
         return results
 
+    def sort_bboxes_linewise(self, bboxes_with_centers: List[Tuple[list[int], Tuple[int, int]]], line_threshold: int = 50) -> List[Tuple[list[int], Tuple[int, int]]]:
+        """
+        Sort bounding boxes line by line based on their centers.
+        :param bboxes_with_centers: List of bounding boxes with their centers
+        :param line_threshold: Threshold for grouping boxes into lines
+        :return: Sorted list of bounding boxes
+        """
+        # Sort bounding boxes by y-coordinate first, then by x-coordinate
+        bboxes_with_centers.sort(key=lambda x: (x[1][1], x[1][0]))
+
+        # Group bounding boxes into lines based on the line threshold
+        lines = []
+        current_line = []
+
+        for bbox_with_center in bboxes_with_centers:
+            bbox, center = bbox_with_center
+            if not current_line:
+                current_line.append(bbox_with_center)
+            else:
+                # Compare the current bbox's y with the last bbox's y in the current line
+                last_center_y = current_line[-1][1][1]  # y-coordinate of the last center
+                if abs(last_center_y - center[1]) <= line_threshold:
+                    current_line.append(bbox_with_center)
+                else:
+                    lines.append(current_line)
+                    current_line = [bbox_with_center]
+
+        # Add the last line if not empty
+        if current_line:
+            lines.append(current_line)
+
+        # Sort each line by x-coordinate
+        sorted_bboxes = []
+        for line in lines:
+            sorted_line = sorted(line, key=lambda x: x[1][0])  # Sort by x-coordinate
+            sorted_bboxes.extend(sorted_line)
+
+        return sorted_bboxes
+
     def return_bboxes(self) -> list[list[int]]:
         """
         Function to return bounding box of each cropped image
@@ -46,13 +85,16 @@ class TextDetection:
         """
         results = self.detect()
         bboxes = []
+
         for result in results:
             boxes = result.boxes.data.tolist()
             for box in boxes:
                 x1, y1, x2, y2 = box[:4]
+                print(box)
+
                 bboxes.append([int(x1), int(y1), int(x2), int(y2)])
         return bboxes
-
+    
     def return_cropped_images(self) -> (list[np.ndarray], list[str]):
         """
         Function to return cropped_images list and saved images file_path
@@ -70,10 +112,13 @@ class TextDetection:
             center_x = (x1 + x2) // 2
             center_y = (y1 + y2) // 2
             bboxes_with_centers.append((bbox, (center_x, center_y)))
+        
+
 
         # Sort bounding boxes first by the y-coordinate of the center, then by the x-coordinate (left to right)
-        bboxes_with_centers = sorted(bboxes_with_centers, key=lambda x: (x[1][1], x[1][0]))
-
+        # sorted_bboxes_with_centers = sorted(bboxes_with_centers, key=lambda x: (x[1][0], x[1][1]))
+        sorted_bboxes_with_centers = self.sort_bboxes_linewise(bboxes_with_centers)
+        print("sorted",sorted_bboxes_with_centers[1:10])
         # Crop images
         cropped_images = []
         cropped_images_file_name = []
