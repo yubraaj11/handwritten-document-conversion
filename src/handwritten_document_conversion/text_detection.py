@@ -32,15 +32,30 @@ class TextDetection:
         """
         return TextDetection._model(os.path.join(OG_IMG_DIR, self.image_file))
 
+    def calculate_dynamic_thresholds(self, image: np.ndarray) -> Tuple[int, int]:
+        """
+        Calculate dynamic thresholds based on the image size.
+        :param image: Input image to base the threshold calculation.
+        :return: Dynamic line_threshold and column_threshold.
+        """
+        # Image dimensions
+        image_height, image_width = image.shape[:2]
+
+        # Dynamic thresholds as a percentage of image height/width
+        line_threshold = int(image_height * 0.05)  # 5% of image height
+        column_threshold = int(image_width * 0.02)  # 2% of image width
+
+        return line_threshold, column_threshold
+
     @staticmethod
     def group_bboxes_by_lines(
             bboxes_with_centers: List[Tuple[list[int], Tuple[int, int]]],
-        line_threshold: int = 30
+        line_threshold: int
     ) -> List[List[Tuple[list[int], Tuple[int, int]]]]:
         """
         Group bounding boxes into lines based on their vertical proximity (y-coordinates).
         :param bboxes_with_centers: List of bounding boxes with their centers.
-        :param line_threshold: Threshold for grouping boxes into lines.
+        :param line_threshold: Dynamic threshold for grouping boxes into lines.
         :return: List of lines, each line being a list of bounding boxes.
         """
         # Sort bounding boxes by y-coordinate (top to bottom)
@@ -69,14 +84,16 @@ class TextDetection:
     def sort_bboxes_linewise_and_columnwise(
         self,
         bboxes_with_centers: List[Tuple[list[int], Tuple[int, int]]],
-        line_threshold: int = 30
+        line_threshold: int,
+        column_threshold: int
     ) -> List[Union[Tuple[list[int], Tuple[int, int]], str]]:
         """
         Sort bounding boxes first line-wise (group by y-coordinate proximity),
         then column-wise (sort by x-coordinate within each line).
         Include line separators between each line.
         :param bboxes_with_centers: List of bounding boxes with their centers.
-        :param line_threshold: Threshold for grouping boxes into lines.
+        :param line_threshold: Dynamic threshold for grouping boxes into lines.
+        :param column_threshold: Dynamic threshold for sorting columns.
         :return: Sorted list of bounding boxes with line separators.
         """
         # Group bounding boxes by lines (vertical alignment)
@@ -120,8 +137,13 @@ class TextDetection:
             for bbox in bboxes
         ]
 
+        # Get dynamic thresholds based on image size
+        line_threshold, column_threshold = self.calculate_dynamic_thresholds(image)
+
         # Sort bounding boxes line-wise and column-wise, including line separators
-        sorted_bboxes_with_centers = self.sort_bboxes_linewise_and_columnwise(bboxes_with_centers)
+        sorted_bboxes_with_centers = self.sort_bboxes_linewise_and_columnwise(
+            bboxes_with_centers, line_threshold, column_threshold
+        )
 
         cropped_images = []
         cropped_images_file_name = []
