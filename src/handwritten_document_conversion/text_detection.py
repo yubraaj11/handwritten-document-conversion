@@ -90,7 +90,7 @@ class TextDetection:
             boxes = result.boxes.data.tolist()
             for box in boxes:
                 x1, y1, x2, y2 = box[:4]
-                print(box)
+                # print(box)
 
                 bboxes.append([int(x1), int(y1), int(x2), int(y2)])
         return bboxes
