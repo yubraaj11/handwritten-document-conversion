@@ -1,17 +1,12 @@
 import os
-from typing import List,Tuple
-
+from typing import List, Tuple, Union
 import numpy as np
 from ultralytics import YOLO
 import cv2
-
 from utils.image_processing import PreprocessImage
-
 
 # Get the parent directory of the current Python file (handwritten_document_conversion)
 file_path = os.path.dirname(os.path.abspath(__file__))
-
-# Move up two directories from src/handwritten_document_conversion to the project root
 root_dir = os.path.abspath(os.path.join(file_path, '..', '..'))
 
 # Set the correct paths for models and images
@@ -24,7 +19,7 @@ RESIZED_IMG_DIR = os.path.join(root_dir, 'images', 'resized')
 class TextDetection:
     _model = None
 
-    def __init__(self, image_file) -> None:
+    def __init__(self, image_file: str) -> None:
         self.image_file = image_file
         self.image_preprocess = PreprocessImage()
 
@@ -33,23 +28,24 @@ class TextDetection:
 
     def detect(self) -> list:
         """
-        Function to return results from TextDetection Model
-        :return: results
+        Function to return results from the TextDetection Model.
         """
-        results = TextDetection._model(os.path.join(OG_IMG_DIR, self.image_file))
-        return results
+        return TextDetection._model(os.path.join(OG_IMG_DIR, self.image_file))
 
-    def sort_bboxes_linewise(self, bboxes_with_centers: List[Tuple[list[int], Tuple[int, int]]], line_threshold: int = 50) -> List[Tuple[list[int], Tuple[int, int]]]:
+    @staticmethod
+    def group_bboxes_by_lines(
+            bboxes_with_centers: List[Tuple[list[int], Tuple[int, int]]],
+        line_threshold: int = 30
+    ) -> List[List[Tuple[list[int], Tuple[int, int]]]]:
         """
-        Sort bounding boxes line by line based on their centers.
-        :param bboxes_with_centers: List of bounding boxes with their centers
-        :param line_threshold: Threshold for grouping boxes into lines
-        :return: Sorted list of bounding boxes
+        Group bounding boxes into lines based on their vertical proximity (y-coordinates).
+        :param bboxes_with_centers: List of bounding boxes with their centers.
+        :param line_threshold: Threshold for grouping boxes into lines.
+        :return: List of lines, each line being a list of bounding boxes.
         """
-        # Sort bounding boxes by y-coordinate first, then by x-coordinate
-        bboxes_with_centers.sort(key=lambda x: (x[1][1], x[1][0]))
+        # Sort bounding boxes by y-coordinate (top to bottom)
+        bboxes_with_centers.sort(key=lambda x: x[1][1])
 
-        # Group bounding boxes into lines based on the line threshold
         lines = []
         current_line = []
 
@@ -58,87 +54,95 @@ class TextDetection:
             if not current_line:
                 current_line.append(bbox_with_center)
             else:
-                # Compare the current bbox's y with the last bbox's y in the current line
-                last_center_y = current_line[-1][1][1]  # y-coordinate of the last center
+                last_center_y = current_line[-1][1][1]
                 if abs(last_center_y - center[1]) <= line_threshold:
                     current_line.append(bbox_with_center)
                 else:
                     lines.append(current_line)
                     current_line = [bbox_with_center]
 
-        # Add the last line if not empty
         if current_line:
             lines.append(current_line)
 
-        # Sort each line by x-coordinate
-        sorted_bboxes = []
-        for line in lines:
-            sorted_line = sorted(line, key=lambda x: x[1][0])  # Sort by x-coordinate
-            sorted_bboxes.extend(sorted_line)
+        return lines
 
-        return sorted_bboxes
-
-    def return_bboxes(self) -> list[list[int]]:
+    def sort_bboxes_linewise_and_columnwise(
+        self,
+        bboxes_with_centers: List[Tuple[list[int], Tuple[int, int]]],
+        line_threshold: int = 30
+    ) -> List[Union[Tuple[list[int], Tuple[int, int]], str]]:
         """
-        Function to return bounding box of each cropped image
-        :return: bboxes
+        Sort bounding boxes first line-wise (group by y-coordinate proximity),
+        then column-wise (sort by x-coordinate within each line).
+        Include line separators between each line.
+        :param bboxes_with_centers: List of bounding boxes with their centers.
+        :param line_threshold: Threshold for grouping boxes into lines.
+        :return: Sorted list of bounding boxes with line separators.
+        """
+        # Group bounding boxes by lines (vertical alignment)
+        lines = self.group_bboxes_by_lines(bboxes_with_centers, line_threshold)
+
+        sorted_bboxes_with_separators = []
+        for idx, line in enumerate(lines):
+            if idx > 0:
+                # Insert a line separator between lines
+                sorted_bboxes_with_separators.append('\n')  # Or '\n' for text separation
+            # Sort each line by x-coordinate (left to right)
+            sorted_line = sorted(line, key=lambda x: x[1][0])
+            sorted_bboxes_with_separators.extend(sorted_line)
+
+        return sorted_bboxes_with_separators
+
+    def return_bboxes(self) -> List[List[int]]:
+        """
+        Function to return bounding boxes of the detected text.
+        :return: List of bounding boxes.
         """
         results = self.detect()
-        bboxes = []
-
-        for result in results:
-            boxes = result.boxes.data.tolist()
-            for box in boxes:
-                x1, y1, x2, y2 = box[:4]
-                print(box)
-
-                bboxes.append([int(x1), int(y1), int(x2), int(y2)])
+        bboxes = [
+            [int(box[0]), int(box[1]), int(box[2]), int(box[3])]
+            for result in results
+            for box in result.boxes.data.tolist()
+        ]
         return bboxes
-    
-    def return_cropped_images(self) -> (list[np.ndarray], list[str]):
-        """
-        Function to return cropped_images list and saved images file_path
-        :return: cropped_images, cropped_images_file_name
-        """
-        # Read the image
-        image = cv2.imread(os.path.join(OG_IMG_DIR, self.image_file))
 
-        # Get bounding boxes
+    def return_cropped_images(self) -> Tuple[List[np.ndarray], List[str]]:
+        """
+        Function to return a list of cropped images and their file names.
+        :return: List of cropped images and file names.
+        """
+        image = cv2.imread(os.path.join(OG_IMG_DIR, self.image_file))
         bboxes = self.return_bboxes()
 
-        bboxes_with_centers = []
-        for bbox in bboxes:
-            x1, y1, x2, y2 = bbox
-            center_x = (x1 + x2) // 2
-            center_y = (y1 + y2) // 2
-            bboxes_with_centers.append((bbox, (center_x, center_y)))
-        
+        # Calculate centers of the bounding boxes
+        bboxes_with_centers = [
+            (bbox, ((bbox[0] + bbox[2]) // 2, (bbox[1] + bbox[3]) // 2))
+            for bbox in bboxes
+        ]
 
+        # Sort bounding boxes line-wise and column-wise, including line separators
+        sorted_bboxes_with_centers = self.sort_bboxes_linewise_and_columnwise(bboxes_with_centers)
 
-        # Sort bounding boxes first by the y-coordinate of the center, then by the x-coordinate (left to right)
-        # sorted_bboxes_with_centers = sorted(bboxes_with_centers, key=lambda x: (x[1][0], x[1][1]))
-        sorted_bboxes_with_centers = self.sort_bboxes_linewise(bboxes_with_centers)
-        print("sorted",sorted_bboxes_with_centers[1:10])
-        # Crop images
         cropped_images = []
         cropped_images_file_name = []
-        for idx, (bbox, center) in enumerate(bboxes_with_centers):
+
+        # Crop images based on sorted bounding boxes
+        for idx, item in enumerate(sorted_bboxes_with_centers):
+            if isinstance(item, str):
+                # Handle line separator (e.g., a marker or placeholder)
+                print(item)  # Optionally print the separator for debugging
+                continue  # Skip processing for line separators
+
+            bbox, _ = item
             x1, y1, x2, y2 = bbox
             cropped_image = image[y1:y2, x1:x2]
-
-            cropped_image = self.image_preprocess.preprocess_image(cropped_image)   # Added padding to make size (224,224) before saving
+            # cropped_image = self.image_preprocess.preprocess_image(cropped_image)
+            cropped_image = cv2.resize(cropped_image, (224, 224))
             cropped_images.append(cropped_image)
 
-            # Create a file name for the cropped image
             file_name = f"{os.path.splitext(self.image_file)[0]}_{idx + 1}{os.path.splitext(self.image_file)[-1]}"
             cropped_images_file_name.append(file_name)
 
             cv2.imwrite(os.path.join(RESIZED_IMG_DIR, file_name), cropped_image)
 
-            # cv2.imshow(file_name, cropped_image)
-            # cv2.waitKey(0)  # Wait for a key press to close the image window
-            # cv2.destroyAllWindows()
-
         return cropped_images, cropped_images_file_name
-
-
