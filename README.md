@@ -12,9 +12,9 @@ This project focuses on converting handwritten documents, particularly in Nepali
 
 ## **Contributors**
 
-- **[Your Name]**: Lead Developer
-- **[Contributor's Name]**: Data Scientist
-- **[Contributor's Name]**: UI/UX Designer
+- **[Aayush Puri]**
+- **[Anil Paudel]**
+- **[Yubraj Sigdel]**
 
 ## **Project Architecture**
 
@@ -24,7 +24,7 @@ The architecture leverages modern deep learning techniques, incorporating state-
 
 # **Status**
 
-- Current phase: **Model Training and Optimization**
+- Current phase: **Model Deployment**
 
 ## **Known Issues**
 
@@ -38,63 +38,50 @@ The architecture leverages modern deep learning techniques, incorporating state-
 - Test the system on a wider variety of documents from different sectors.
 
 ---
-
 # **Usage**
 
-## **Installation**
-
-To begin using this project, you can utilize the included `Makefile`.
-
-### **Creating Virtual Environment**
+## **Creating Virtual Environment**
 
 This project requires `python-3.8`. To ensure compatibility, we recommend creating a virtual environment.
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate
+conda create -n handwritten python==3.10
+conda activate handwritten
 ```
 
-### **Pre-commit**
-
-Install and activate `pre-commit` to automatically format and lint your code.
-
-```bash
-make use-pre-commit
+## **Pulling Repository**
+### For Linux
+```commandline
+git clone git@github.com:fuseai-fellowship/hand-written-document-conversion.git
+```
+### For Windows
+```commandline
+git clone https://github.com/fuseai-fellowship/hand-written-document-conversion.git
 ```
 
-It will run every time you commit changes via Git.
-
-### **pip-tools**
-
-Manage dependencies using `pip-tools` by running:
-
-```bash
-make use-pip-tools
+## **Install required requirements**
+```commandline
+pip install -r requirements.txt
 ```
 
-To install dependencies or update new ones, modify the `requirements.in` file, then:
-
-```bash
-make deps-install
-# Or simply:
-make
-```
-
-To sync and clean unused dependencies:
-
-```bash
-make deps-sync
+## Run via gradio app
+```commandline
+python app.py
 ```
 
 ---
 
+The sample UI is as shown:
+(Delete this and paste the ui screenshot via update readme via github)
+
+---
 ## **Usage Instructions**
 
 Follow the below instructions to run the system and test it on your documents:
 
 1. Upload a scanned handwritten document.
 2. Run the system to extract the handwritten text.
-3. View the results in digital format.
+3. View the results in digital format displayed beside the image input.
 
 ---
 
@@ -106,6 +93,7 @@ Follow the below instructions to run the system and test it on your documents:
 ## **Code Structure**
 
 - **/src**: Contains the core processing scripts.
+- **/motebook**: Contains the notebook used while finetuning TrOCR model.
 - **/models**: Includes the pre-trained models used in text recognition.
 - **/data**: Houses training and test datasets.
 
