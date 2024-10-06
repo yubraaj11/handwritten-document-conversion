@@ -43,7 +43,8 @@ class TextRecognition:
         """
 
         # Convert OpenCV image (NumPy array) to PIL Image
-        pil_image = cv2.imread(image_path)
+        # pil_image = cv2.imread(image_path)
+        pil_image = Image.open(image_path)
 
         if TextRecognition._processor is None:
             raise ValueError("Processor is not initialized.")
