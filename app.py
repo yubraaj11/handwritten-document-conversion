@@ -35,7 +35,7 @@ iface = gr.Interface(
     outputs="text",  # Display recognized text
     title="Handwritten Document Conversion - Nepali",
     description="Upload a page of Nepali handwritten text to extract and scan text.",
-    examples=["images/original/try_1.jpg", "images/original/IMG_4176.jpg"],  # Example images for demonstration
+    examples=["images/original/test_text.png", "images/original/kabita.jpg"],  # Example images for demonstration
 )
 
 if __name__ == "__main__":
