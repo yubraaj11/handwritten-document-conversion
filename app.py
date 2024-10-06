@@ -31,10 +31,11 @@ def pipeline_function(img):
 # Gradio interface
 iface = gr.Interface(
     fn=pipeline_function,
-    inputs=gr.Image(type="filepath"),  # Accept an image file path
-    outputs="text",  # Output is displayed as text
-    title="Handwritten Document Conversion",
-    description="Upload an image of handwritten text to extract and display the text content."
+    inputs=gr.Image(type="filepath", label="Upload your handwritten images"),  # File upload input
+    outputs="text",  # Display recognized text
+    title="Handwritten Document Conversion - Nepali",
+    description="Upload a page of Nepali handwritten text to extract and scan text.",
+    examples=["images/original/try_1.jpg", "images/original/IMG_4176.jpg"],  # Example images for demonstration
 )
 
 if __name__ == "__main__":
