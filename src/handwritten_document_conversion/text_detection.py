@@ -158,8 +158,8 @@ class TextDetection:
             bbox, _ = item
             x1, y1, x2, y2 = bbox
             cropped_image = image[y1:y2, x1:x2]
-            # cropped_image = self.image_preprocess.preprocess_image(cropped_image)
-            cropped_image = cv2.resize(cropped_image, (224, 224))
+            cropped_image = self.image_preprocess.preprocess_image(cropped_image)
+            # cropped_image = cv2.resize(cropped_image, (224, 224))
             cropped_images.append(cropped_image)
 
             file_name = f"{os.path.splitext(self.image_file)[0]}_{idx + 1}{os.path.splitext(self.image_file)[-1]}"
