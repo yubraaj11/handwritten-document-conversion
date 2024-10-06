@@ -38,6 +38,7 @@ The architecture leverages modern deep learning techniques, incorporating state-
 - Test the system on a wider variety of documents from different sectors.
 
 ---
+
 # **Usage**
 
 ## **Creating Virtual Environment**
@@ -50,23 +51,29 @@ conda activate handwritten
 ```
 
 ## **Pulling Repository**
+
 ### For Linux
+
 ```commandline
 git clone git@github.com:fuseai-fellowship/hand-written-document-conversion.git
 ```
+
 ### For Windows
+
 ```commandline
 git clone https://github.com/fuseai-fellowship/hand-written-document-conversion.git
 ```
 
 ## **Install required requirements**
+
 ```commandline
 pip install -r requirements.txt
 ```
 
-## Run via gradio app
-```commandline
-python app.py
+To sync and clean unused dependencies:
+
+```bash
+make deps-sync
 ```
 
 ---
@@ -75,6 +82,7 @@ The sample UI is as shown:
 (Delete this and paste the ui screenshot via update readme via github)
 
 ---
+
 ## **Usage Instructions**
 
 Follow the below instructions to run the system and test it on your documents:
