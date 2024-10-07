@@ -2,13 +2,12 @@
 
 ## **Introduction**
 
-This project focuses on converting handwritten documents, particularly in Nepali script, into digital text using a state-of-the-art (SOTA) model. The system automates the extraction of handwritten text from single-page documents, significantly improving efficiency and accuracy in document processing.
+This project focuses on building an end-to-end system to detect and convert handwritten text, specifically in Devanagari script. Leveraging advanced models like TrOCR (Transformer-based OCR), the system extracts text from scanned documents, including both printed and handwritten content, with a focus on Nepali language. The model uses a Vision Transformer (ViT) as an encoder to process image features and NepBERT, a variant of RoBERTa, as a decoder to generate text.
 
 ## **Goals**
 
 - Develop a high-accuracy OCR model for handwritten Nepali text recognition.
-- Automate the conversion of scanned handwritten documents into structured digital text.
-- Provide a system that can handle various layouts and document types.
+- Automate the conversion of scanned handwritten documents into digital text.
 
 ## **Contributors**
 
@@ -18,7 +17,6 @@ This project focuses on converting handwritten documents, particularly in Nepali
 
 ## **Project Architecture**
 
-The architecture leverages modern deep learning techniques, incorporating state-of-the-art models like TrOCR for text recognition and LayoutLMv3 for document layout analysis. The system processes scanned images, extracts text, and outputs structured data ready for use.
 
 ---
 
@@ -29,13 +27,13 @@ The architecture leverages modern deep learning techniques, incorporating state-
 ## **Known Issues**
 
 - Minor inaccuracies in detecting certain handwritten styles.
-- Overfitting on specific types of documents with complex layouts.
+- Overfitting on specific types of Devanagari words. IT still lacks robustness to generailze in Nepali Handwritten Texts.
 
 ## **High-Level Next Steps**
 
 - Fine-tune the model to handle additional handwritten styles.
-- Expand the system to support multi-page document conversion.
-- Test the system on a wider variety of documents from different sectors.
+- Expand the system to support batch inference of documents.
+
 
 ---
 
@@ -101,14 +99,14 @@ Follow the below instructions to run the system and test it on your documents:
 ## **Code Structure**
 
 - **/src**: Contains the core processing scripts.
-- **/motebook**: Contains the notebook used while finetuning TrOCR model.
-- **/models**: Includes the pre-trained models used in text recognition.
+- **/notebook**: Contains the notebook used while finetuning TrOCR model.
+- **/models**: Includes the pre-trained YOLO model for text-detection.
 - **/data**: Houses training and test datasets.
 
 ## **Artifacts Location**
 
 - Output files and extracted texts are stored in the `/output` directory.
-- Checkpoints and trained models are saved under `/models/checkpoints`.
+
 
 ---
 
@@ -117,9 +115,9 @@ Follow the below instructions to run the system and test it on your documents:
 ## **Metrics Used**
 
 - **Character Error Rate (CER)**: Measures accuracy in recognizing handwritten characters.
-- **Word Error Rate (WER)**: Evaluates word-level accuracy.
+
 
 ## **Evaluation Results**
 
-- The system achieved a **CER of X%** and a **WER of X%** on the test set.
+- The system achieved a **CER of 9.05%** on the test set.
 - These results demonstrate the model’s ability to generalize across different handwriting styles.
