@@ -11,11 +11,13 @@ This project focuses on building an end-to-end system to detect and convert hand
 
 ## **Contributors**
 
-- **[Aayush Puri]**
-- **[Anil Paudel]**
-- **[Yubraj Sigdel]**
+- **Aayush Puri**  
+- **Anil Paudel**
+- **Yubraj Sigdel**
 
 ## **Project Architecture**
+![Screenshot from 2024-10-07 16-50-07](https://github.com/user-attachments/assets/2690c820-f33f-418a-99f8-9680ff169e43)
+
 
 
 ---
