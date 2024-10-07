@@ -43,7 +43,7 @@ The architecture leverages modern deep learning techniques, incorporating state-
 
 ## **Creating Virtual Environment**
 
-This project requires `python-3.8`. To ensure compatibility, we recommend creating a virtual environment.
+This project requires `python-3.10`. To ensure compatibility, we recommend creating a virtual environment.
 
 ```bash
 conda create -n handwritten python==3.10
